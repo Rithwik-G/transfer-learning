@@ -1,0 +1,99 @@
+Unloading the anaconda2 module (if loaded)...
+Unloading the anaconda3 module (if loaded)...
+TensorFlow 2.10.0
+-----------------------------
+
+Description
+-----------
+The modulefile AI/tensorflow_23.02-2.10.0-py3 provides a TensorFlow 2.10.0
+development environment for Artificial Intelligence(AI)/Machine
+Learning(ML)/Big Data(BD) on top of Python 3.
+
+Module contents
+---------------
+Several popular libraries are included in this environment, such as:
+    bokeh, matplotlib, mkl, numba, numpy, pandas, pillow, scikit-learn, theano,
+tensorflow.
+
+To check the full list of available packages in this environment, first
+activate it and then run the command
+    conda list
+
+* bokeh 3.0.3
+* cudnn 8.2.1
+* cython 0.29.33
+* h5py 3.7.0
+* hdf5 1.10.6
+* ipython 8.10.0
+* keras 2.10.0
+* matplotlib 3.6.2
+* mkl 2021.4.0
+* notebook 6.5.2
+* numpy 1.23.5
+* pandas 1.5.2
+* pillow 9.3.0
+* python 3.8.16
+* tensorboard 2.10.0
+* tensorflow 2.10.0
+
+If you need to further customize this environment (e.g., install additional
+packages, or upgrade a particular package),
+you could first clone this environment as follows:
+    conda create --prefix <path to a dir in which you can write> --clone $ENV
+Then activate the newly spawned environment and proceed with your
+customization.
+
+To get further help with conda usage, you can try one of the following:
+    conda -h
+    conda <command> -h
+
+Module Activation
+-------------------
+The following commands have been executed for activating the module:
+    # module load AI/tensorflow_23.02-2.10.0-py3
+    # source /opt/packages/anaconda3/2020.11/etc/profile.d/conda.sh # conda
+init
+    # conda activate /opt/packages/AI/tensorflow_23.02-2.10.0-py3
+    # (/opt/packages/AI/tensorflow_23.02-2.10.0-py3) USERNAME@BRIDGES-2:~ $ #
+<< Your prompt should have changed to something similar.
+
+For deactivating this module, run either of the following commands:
+    conda deactivate
+    # or
+    module unload AI/tensorflow_23.02-2.10.0-py3
+
+[1;32mThe module has been activated and is ready to be used.[0m
+
+2025-05-31 15:48:15.099515: I tensorflow/core/platform/cpu_feature_guard.cc:193] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  SSE4.1 SSE4.2 AVX AVX2 AVX512F AVX512_VNNI FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2025-05-31 15:48:15.216268: I tensorflow/core/util/util.cc:169] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+2025-05-31 15:48:15.249534: E tensorflow/stream_executor/cuda/cuda_blas.cc:2981] Unable to register cuBLAS factory: Attempting to register factory for plugin cuBLAS when one has already been registered
+2025-05-31 15:48:34.090580: I tensorflow/core/platform/cpu_feature_guard.cc:193] This TensorFlow binary is optimized with oneAPI Deep Neural Network Library (oneDNN) to use the following CPU instructions in performance-critical operations:  SSE4.1 SSE4.2 AVX AVX2 AVX512F AVX512_VNNI FMA
+To enable them in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2025-05-31 15:48:35.167031: I tensorflow/core/common_runtime/gpu/gpu_device.cc:1616] Created device /job:localhost/replica:0/task:0/device:GPU:0 with 30968 MB memory:  -> device: 0, name: Tesla V100-SXM2-32GB, pci bus id: 0000:b3:00.0, compute capability: 7.0
+2025-05-31 15:48:42.848517: W tensorflow/core/common_runtime/forward_type_inference.cc:332] Type inference failed. This indicates an invalid graph that escaped type checking. Error message: INVALID_ARGUMENT: expected compatible input types, but input 1:
+type_id: TFT_OPTIONAL
+args {
+  type_id: TFT_PRODUCT
+  args {
+    type_id: TFT_TENSOR
+    args {
+      type_id: TFT_INT32
+    }
+  }
+}
+ is neither a subtype nor a supertype of the combined inputs preceding it:
+type_id: TFT_OPTIONAL
+args {
+  type_id: TFT_PRODUCT
+  args {
+    type_id: TFT_TENSOR
+    args {
+      type_id: TFT_INT8
+    }
+  }
+}
+
+	while inferring type of node 'cond_41/output/_22'
+2025-05-31 15:48:43.944818: I tensorflow/stream_executor/cuda/cuda_dnn.cc:384] Loaded cuDNN version 8201
+slurmstepd: error: *** JOB 32641231 ON v003 CANCELLED AT 2025-05-31T19:48:01 DUE TO TIME LIMIT ***

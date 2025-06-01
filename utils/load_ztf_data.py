@@ -4,8 +4,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import OneHotEncoder
 
 classes = ['SNIa', 'SNIa-91bg', 'SNIax', 'SNIb', 'SNIc', 'SNIc-BL', 'SNII', 'SNIIn', 'SNIIb', 'TDE', 'SLSN-I', 'AGN', 'CaRT', 'KNe', 'PISN', 'ILOT', 'uLens-BSR'] # In order with file names
-anom_classes = classes[-5:]
-non_anom_classes = classes[:-5]
+anom_classes = classes[-6:]
+non_anom_classes = classes[:-6] # change to :-5
 
 def load_data():
     target = load("../../data/target_cls")
@@ -15,6 +15,9 @@ def load_data():
 
 
 def cut_by_class(x_data, host_galaxy_info, target, limit = 13000):
+    
+
+
     valid = [False] * len(target)
     for class_ in np.unique(target):
         cnt = 0
@@ -99,7 +102,22 @@ def generate_class_weights(y_train):
 # }
 
 
-def load_ztf_data():
+def load_ztf_data(bts_subset=False):
+    if (bts_subset):
+        class_map = {
+            'SNIa':'SNIa',
+            'SNIa-91bg':'SNIa',
+            'SNIax':'SNIa',
+            'SNIb':'SNIb/c',
+            'SNIc':'SNIb/c',
+            'SNIc-BL':'SNIb/c',
+            'SNII':'SNII',
+            'SNIIn':'SNII',
+            'SNIIb':'SNII',
+            'TDE':'TDE',
+            'SLSN-I':'SLSN-I',
+        }
+    
     print("Loading ZTF data...")
     x_data, host_galaxy_info, target = load_data()
     cut_by_class(x_data, host_galaxy_info, target)
@@ -119,11 +137,15 @@ def load_ztf_data():
     pad_curves(x_data, ntimesteps)
     
     (x_data_norm, host_gal, y_data_norm, lengths_norm), (_, _, _, _) = split_data(target, x_data, host_galaxy_info, lengths)
-    
+    for i in range(len(y_data_norm)):
+        if (bts_subset):
+            y_data_norm[i] = class_map[y_data_norm[i]]
+
+
     enc = OneHotEncoder(handle_unknown='ignore')
     y_data_norm = enc.fit_transform(np.array(y_data_norm).reshape(-1, 1)).todense()  
 
-    print(enc.categories_)
+    print('ZTF Classes', enc.categories_)
 
     X_train, X_test, host_gal_train, host_gal_test, y_train, y_test, lengths_train, lengths_test = train_test_split(x_data_norm, host_gal, y_data_norm, lengths_norm, random_state = 40, test_size = 0.1)
     X_train, X_val, host_gal_train, host_gal_val, y_train, y_val, lengths_train, lengths_val = train_test_split(X_train, host_gal_train, y_train, lengths_train, random_state = 40, test_size = 1/9)
