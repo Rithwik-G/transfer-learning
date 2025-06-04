@@ -19,8 +19,6 @@ os.makedirs(storage_path, exist_ok=True)
 # res = load(os.path.join(storage_path, 'lsst/lsst_ft_lim.pkl'))
 # save(os.path.join(storage_path, 'lsst/lsst_ft_lim.pkl'), res.performance)
 
-assert(False)
-
 class Dataset:
     def __init__(self, X_train, y_train, X_val, y_val, X_test, y_test, host_gal_train, host_gal_test, host_gal_val, class_weights, ordered_class_names):
         self.ordered_class_names = ordered_class_names[0]
@@ -105,13 +103,15 @@ if __name__ == '__main__':
                 
                 res = Results(performance, long_title)
                 save(os.path.join(storage_path, f"lsst/{fname}.pkl"), res)
-        print("Performance: ", lsst_direct_perf)
+        print(f"{fname} Performance: ", lsst_direct_perf)
 
 
-    limits = [100, 500, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000, 20000, 30000]
+    limits = [100, 300, 500, 700, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000]
     unfrozen = ['gru_1', 'gru_2', 'dense_3', 'latent', 'output']
 
     # experiment(pre=True, limits=limits, fname='', unfrozen=unfrozen)
-    # experiment(pre=False, limits=limits, fname='lsst_direct', unfrozen=None, long_title='LSST Direct Training')
-    experiment(pre=True, limits=limits, fname='lsst_ft_all', unfrozen=unfrozen, long_title='LSST Fine Tuned Fully Unfrozen')
-    experiment(pre=True, limits=limits, fname='lsst_ft_lim', unfrozen=['gru_1', 'gru_2', 'latent', 'output'], long_title='LSST Fine Tuned Partially Unfrozen')
+    # experiment(pre=False, limits=limits, fname='lsst_direct1', unfrozen=None, long_title='LSST Direct Training')
+    experiment(pre=True, limits=limits, fname='lsst_ft_all1', unfrozen=unfrozen, long_title='LSST Fine Tuned Fully Unfrozen')
+    experiment(pre=True, limits=limits, fname='lsst_ft_pref_suff1', unfrozen=['gru_1', 'gru_2', 'latent', 'output'], long_title='LSST Fine Tuned Pref Suff')
+    experiment(pre=True, limits=limits, fname='lsst_ft_suff1', unfrozen=['latent', 'output'], long_title='LSST Fine Tuned Suff')
+    experiment(pre=True, limits=limits, fname='lsst_ft_pref1', unfrozen=['gru_1', 'gru_2'], long_title='LSST Fine Tuned Pref')
