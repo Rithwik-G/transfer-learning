@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=tf_job                # Job name
-#SBATCH --output=tf_output.log           # Output log file
-#SBATCH --error=tf_error.log             # Error log file
+#SBATCH --output=bts.log           # Output log file
+#SBATCH --error=bts.log             # Error log file
 #SBATCH --gres=gpu:v100-32:1             # Request 1 V100-32GB GPU
 #SBATCH --partition=GPU-shared           # Use GPU-shared partition
 #SBATCH --time=4:00:00                   # 4-hour time limit

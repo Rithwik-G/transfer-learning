@@ -4,8 +4,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import OneHotEncoder
 
 classes = ['SNIa', 'SNIa-91bg', 'SNIax', 'SNIb', 'SNIc', 'SNIc-BL', 'SNII', 'SNIIn', 'SNIIb', 'TDE', 'SLSN-I', 'AGN', 'CaRT', 'KNe', 'PISN', 'ILOT', 'uLens-BSR'] # In order with file names
-anom_classes = classes[-6:]
-non_anom_classes = classes[:-6] # change to :-5
+anom_classes = classes[-5:]
+non_anom_classes = classes[:-5] # change to :-5
 
 def load_data():
     target = load("../../data/target_cls")
@@ -88,7 +88,8 @@ def generate_class_weights(y_train):
 
     for id in class_weights.keys():
         class_weights[id] = len(y_train) / class_weights[id]
-        return class_weights
+    
+    return class_weights
 
 
 # class_map = {
@@ -115,7 +116,7 @@ def load_ztf_data(bts_subset=False):
             'SNIIn':'SNII',
             'SNIIb':'SNII',
             'TDE':'TDE',
-            'SLSN-I':'SLSN-I',
+            'SLSN-I':'SLSN-I'
         }
     
     print("Loading ZTF data...")
@@ -141,7 +142,6 @@ def load_ztf_data(bts_subset=False):
         if (bts_subset):
             y_data_norm[i] = class_map[y_data_norm[i]]
 
-
     enc = OneHotEncoder(handle_unknown='ignore')
     y_data_norm = enc.fit_transform(np.array(y_data_norm).reshape(-1, 1)).todense()  
 
@@ -150,6 +150,9 @@ def load_ztf_data(bts_subset=False):
     X_train, X_test, host_gal_train, host_gal_test, y_train, y_test, lengths_train, lengths_test = train_test_split(x_data_norm, host_gal, y_data_norm, lengths_norm, random_state = 40, test_size = 0.1)
     X_train, X_val, host_gal_train, host_gal_val, y_train, y_val, lengths_train, lengths_val = train_test_split(X_train, host_gal_train, y_train, lengths_train, random_state = 40, test_size = 1/9)
     
+    y_train_single = [np.argmax(y_train[i]) for i in range(len(y_train))]
+    # print("ZTF Training Counts", np.unique(y_train_single, return_counts=True))
+
     X_train = np.array(X_train)
     y_train = np.array(y_train)
 

@@ -7,7 +7,7 @@ def load(file_name):
     with open(file_name, 'rb') as f:
         return pickle.load(f)
     
-avoid_classes = ['other', 'Other', 'ILRT', 'LBV', 'LRN', 'Ca-rich', 'nova', 'SLSN-II']
+avoid_classes = ['other', 'Other', 'ILRT', 'LBV', 'LRN', 'Ca-rich', 'nova', 'SLSN-II'] # comment last two
 class_map = {
     'SN Ibn': 'SN Ib/c',
     'SN Icn': 'SN Ib/c',
