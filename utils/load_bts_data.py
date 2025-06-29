@@ -60,7 +60,8 @@ def load_bts_data(pad=-1):
     y_data_norm = enc.fit_transform(np.array(y_data_norm).reshape(-1, 1)).todense()
 
     X_train, X_test, host_gal_train, host_gal_test, y_train, y_test = train_test_split(x_data_norm, host_gal, y_data_norm, random_state = 45, test_size = 0.2)
-    X_train, X_val, host_gal_train, host_gal_val, y_train, y_val = train_test_split(X_train, host_gal_train, y_train, random_state = 45, test_size = 0.2)
+    X_train, X_val, host_gal_train, host_gal_val, y_train, y_val = train_test_split(X_train, host_gal_train, y_train, random_state 
+    = 45, test_size = 0.2)
 
     class_weights = {i : 0 for i in range(y_train.shape[1])}
 

@@ -4,8 +4,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import OneHotEncoder
 
 classes = ['SNIa', 'SNIa-91bg', 'SNIax', 'SNIb', 'SNIc', 'SNIc-BL', 'SNII', 'SNIIn', 'SNIIb', 'TDE', 'SLSN-I', 'AGN', 'CaRT', 'KNe', 'PISN', 'ILOT', 'uLens-BSR'] # In order with file names
-anom_classes = classes[-5:]
-non_anom_classes = classes[:-5] # change to :-5
+anom_classes = classes[-6:]
+non_anom_classes = classes[:-6] # change to :-5
 
 def load_data():
     target = load("../../data/target_cls")

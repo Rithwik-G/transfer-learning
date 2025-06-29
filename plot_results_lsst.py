@@ -17,8 +17,17 @@ storage_path = "/ocean/projects/phy240020p/rgupta9/transfer_learning"
 
 # files = ['bts_ft_output_five1', 'bts_ft_last_two_five1', 'bts_ft_all_five1']#, 'bts_direct_five1'] # 'bts_ft_last_two_five1', 'bts_ft_output_five1', 
 # names = ['Output', 'Last Two Layers', 'Fully Unfrozen']
-files = [ ['lsst/lsst_ft_suff_new'], ['lsst/lsst_direct_new']] #, ['lsst/lsst_ft_only_output'], ['lsst/lsst_ft_only_output_replace']] # ['lsst/lsst_ft_all2', 'lsst/lsst_ft_pref_suff2', 'lsst/lsst_ft_pref2']
-names = ['Transfer Learning', 'Direct Training', 'Transfer Learning Output Only', 'Output Replaced'] # 'Transfer Learning', 'Direct Training', 'Fully Unfrozen']
+# files = [ ['lsst/lsst_ft_suff_new'], ['lsst/lsst_direct_new']] #, ['lsst/lsst_ft_only_output'], ['lsst/lsst_ft_only_output_replace']] # ['lsst/lsst_ft_all2', 'lsst/lsst_ft_pref_suff2', 'lsst/lsst_ft_pref2']
+# names = ['Transfer Learning', 'Direct Training', 'Transfer Learning Output Only', 'Output Replaced'] # 'Transfer Learning', 'Direct Training', 'Fully Unfrozen']
+
+# files = [ ['lsst/class_change_ft_'], ['lsst/class_change_direct'], ['lsst/class_change_ft_gru']] #, ['lsst/lsst_ft_only_output'], ['lsst/lsst_ft_only_output_replace']] # ['lsst/lsst_ft_all2', 'lsst/lsst_ft_pref_suff2', 'lsst/lsst_ft_pref2']
+# names = ['Transfer Learning', 'Direct Training', 'Transfer Learning Output Only', 'Output Replaced'] # 'Transfer Learning', 'Direct Training', 'Fully Unfrozen']
+
+# files = [['lsst/lsst_ft_pref_suff'], ['lsst/lsst_direct_new']]
+# names = ['Transfer Learning', 'Direct Training']
+
+files = [['lsst/lsst_ft_pref_suff'], ['lsst/lsst_ft_output'], ['lsst/lsst_ft_only_output']]
+names = ['GRU and Output', 'Output Only', 'Full Model']
 
 colors = [
     "#fc8d62",  # coral
@@ -58,10 +67,10 @@ for ind, file_list in enumerate(files):
         del combined_res[limit]
 
     limits = sorted(combined_res.keys())
-    # removed = [900, 1000]
-    # for limit in removed:
-    #     if limit in limits:
-    #         limits.remove(limit)
+    removed = [900, 1000]
+    for limit in removed:
+        if limit in limits:
+            limits.remove(limit)
     perf = []
     err = []
 
@@ -91,16 +100,16 @@ plt.legend(fontsize=15)
 # plt.title("LSST Sims Performance", fontsize=20)
 plt.xlabel("Training Samples", fontsize=15)
 plt.ylabel("Classification AUROC", fontsize=15)
-os.makedirs("figures", exist_ok=True)
+# os.makedirs("figures", exist_ok=True)
 # plt.ylim(0.4, 1.0)
 plt.grid()
-plt.savefig("figures/lsst_macro_new_hyper.pdf", bbox_inches='tight')
+plt.savefig("final_figures/lsst_hyper.pdf", bbox_inches='tight')
 plt.show()
 plt.clf()
+# assert(False)
 
 
-
-best = 'lsst/lsst_ft_suff_new'
+best = 'lsst/lsst_ft_pref_suff'
 res = load(os.path.join(storage_path, best + '.pkl')).performance
 
 limits = list(res.keys())
@@ -132,7 +141,7 @@ plt.ylabel("Classification AUROC", fontsize=15)
 # plt.ylim(0.4, 1.0)
 os.makedirs("figures", exist_ok=True)
 plt.grid()
-plt.savefig("figures/lsst_by_class_ft.pdf", bbox_inches='tight')
+plt.savefig("final_figures/lsst_cls.pdf", bbox_inches='tight')
 plt.show()
 
 # m = 'macro'

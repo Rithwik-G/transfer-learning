@@ -8,6 +8,7 @@ from utils.models import transfer
 from utils.models import build_model
 
 from astromcad import astromcad
+from keras.callbacks import EarlyStopping
 
 storage_path = "/ocean/projects/phy240020p/rgupta9/transfer_learning"
 
@@ -18,6 +19,11 @@ os.makedirs(storage_path, exist_ok=True)
 
 # res = load(os.path.join(storage_path, 'lsst/lsst_ft_lim.pkl'))
 # save(os.path.join(storage_path, 'lsst/lsst_ft_lim.pkl'), res.performance)
+
+
+def train(model, X_train, y_train, X_val, y_val, class_weights, epochs=40):
+    early_stopping = EarlyStopping(patience=5, min_delta=0.001,monitor="val_loss",restore_best_weights=True)
+    return model.fit(x = X_train, validation_data=(X_val, y_val), y = y_train, epochs=epochs, batch_size = 128, class_weight = class_weights, callbacks=[early_stopping])
 
 class Dataset:
     def __init__(self, X_train, y_train, X_val, y_val, X_test, y_test, host_gal_train, host_gal_test, host_gal_val, class_weights, ordered_class_names):
@@ -46,6 +52,7 @@ if __name__ == '__main__':
     lsst = Dataset(X_train, y_train, X_val, y_val, X_test, y_test, host_gal_train, host_gal_test, host_gal_val, class_weights, ordered_class_names)
 
 
+
     # print(len(X_train) + len(X_val) + len(X_test))
     # assert(False)
     # for _ in range(1, 6):
@@ -64,14 +71,13 @@ if __name__ == '__main__':
 
     def experiment(pre, limits, fname, unfrozen, long_title):
         lsst_direct_perf = {}
-
         
         
-        for i in range(1, 6):
+        for i in range(2, 6):
             for limit in limits:
                 if (limit not in lsst_direct_perf):
                     lsst_direct_perf[limit] = {'class_based' : {cl : [] for cl in lsst.ordered_class_names}, 'macro' : [], 'micro': []}
-                print(f"LSST Direct Training {i} {limit}")
+                print(f"LSST Direct Training {fname} {i} {limit}")
                 new_model=None
                 
                 new_model = build_model(latent_size=100, ntimesteps=lsst.X_train.shape[1], num_classes=lsst.y_train.shape[1], contextual=0, n_features=lsst.X_train.shape[2])
@@ -84,9 +90,10 @@ if __name__ == '__main__':
                         temp_model.load_weights(model_pth)
                         # Copy weights for all layers except 'output'
                         for layer, temp_layer in zip(new_model.layers, temp_model.layers):
-                            if layer.name != 'output':
-                                layer.set_weights(temp_layer.get_weights())
+                            # if layer.name != 'output':
+                            layer.set_weights(temp_layer.get_weights())
                     except Exception as e:
+                        print(e)
                         print("Retrained Foundation Model")
                         # Train and save ZTF model if weights not found
                         temp_model = build_model(latent_size=100, ntimesteps=ztf.X_train.shape[1], num_classes=ztf.y_train.shape[1], contextual=0, n_features=ztf.X_train.shape[2])
@@ -94,8 +101,7 @@ if __name__ == '__main__':
                         temp_model.save_weights(model_pth)
                         # Copy weights for all layers except 'output'
                         for layer, temp_layer in zip(new_model.layers, temp_model.layers):
-                            if layer.name != 'output':
-                                layer.set_weights(temp_layer.get_weights())
+                            layer.set_weights(temp_layer.get_weights())
 
                     for layer in new_model.layers:
                         if (layer.name in unfrozen):
@@ -103,10 +109,11 @@ if __name__ == '__main__':
                         else:
                             layer.trainable = False
 
-                print(new_model.summary())
-                
+                new_model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
+                new_model.summary()
                 val = limit//10
                 train = limit - val
+                
                 astromcad.train(new_model, lsst.X_train[:train], lsst.y_train[:train], lsst.X_val[:val], lsst.y_val[:val], lsst.class_weights, epochs=40)
 
                 lsst_pred = new_model.predict(lsst.X_test)
@@ -129,14 +136,22 @@ if __name__ == '__main__':
         print(f"{fname} Performance: ", lsst_direct_perf)
 
 
-    limits = [100, 200, 300, 400, 500, 600]#, 700, 800, 900, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000]
+    limits = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 2000, 3000, 4000, 5000, 6000, 7000, 8000, 9000, 10000]
     unfrozen = ['gru_1', 'gru_2', 'dense_3', 'latent', 'output']
 
     # experiment(pre=False, limits=limits, fname='lsst_direct_new', unfrozen=unfrozen,  long_title='LSST Direct Training')
-    # experiment(pre=False, limits=limits, fname='lsst_direct5', unfrozen=None, long_title='LSST Direct Training')
-    # experiment(pre=True, limits=limits, fname='lsst_ft_all_new', unfrozen=unfrozen, long_title='LSST Fine Tuned Fully Unfrozen')
-    # experiment(pre=True, limits=limits, fname='lsst_ft_pref_suff_new', unfrozen=['gru_1', 'gru_2', 'latent', 'output'], long_title='LSST Fine Tuned Pref Suff')
+    # experiment(pre=False, limits=limits, fname='lsst_direct', unfrozen=None, long_title='LSST Direct Training')
+    
+    experiment(pre=True, limits=limits, fname='lsst_ft_pref_suff', unfrozen=['gru_1', 'gru_2', 'latent', 'output'], long_title='LSST Fine Tuned Pref Suff')
+    experiment(pre=True, limits=limits, fname='lsst_ft_output', unfrozen=['output'], long_title='LSST Fine Tuned Output')
+    
+    # experiment(pre=True, limits=limits, fname='lsst_ft_one', unfrozen=['gru_1'], long_title='LSST Fine Tuned One')
+    # experiment(pre=True, limits=limits, fname='lsst_ft_all', unfrozen=unfrozen, long_title='LSST Fine Tuned Fully Unfrozen')
+
+    # experiment(pre=True, limits=limits, fname='lsst_ft_pref_suff', unfrozen=['gru_1', 'gru_2', 'latent', 'output'], long_title='LSST Fine Tuned Suff')
+
+
     # experiment(pre=True, limits=limits, fname='lsst_ft_only_output_replace_smaller', unfrozen=['output'], long_title='LSST Fine Tuned Output')
     # experiment(pre=True, limits=limits, fname='lsst_ft_pref1', unfrozen=['gru_1', 'gru_2'], long_title='LSST Fine Tuned Pref')
-    experiment(pre=True, limits=limits, fname='class_change_ft', unfrozen=['output'], long_title='LSST Class Change Fine Tuned')
-    experiment(pre=False, limits=limits, fname='class_change_direct', unfrozen=None, long_title='LSST Class Change Direct Training')
+    # experiment(pre=True, limits=limits, fname=None, unfrozen=['gru_1', 'gru_2', 'output'], long_title='LSST Class Change Fine Tuned')
+    # experiment(pre=False, limits=limits, fname='class_change_direct', unfrozen=None, long_title='LSST Class Change Direct Training')

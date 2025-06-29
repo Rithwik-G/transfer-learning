@@ -13,4 +13,4 @@ module purge
 module load AI/tensorflow_23.02-2.10.0-py3
 
 # Run your script
-python run.py
+python run_bts.py

@@ -41,9 +41,9 @@ if __name__ == '__main__':
     y_test_single = [np.argmax(bts.y_test[i]) for i in range(len(bts.y_test))]
     y_val_single = [np.argmax(bts.y_val[i]) for i in range(len(bts.y_val))]
     y_train_single = [np.argmax(bts.y_train[i]) for i in range(len(bts.y_train))]
-    print("Testing Counts", np.unique(y_test_single, return_counts=True))
-    print("Validation Counts", np.unique(y_val_single, return_counts=True))
-    print("Training Counts", np.unique(y_train_single, return_counts=True))
+    print("Testing Counts", np.unique(y_test_single, return_counts=True), "Total:", len(y_test_single))
+    print("Validation Counts", np.unique(y_val_single, return_counts=True), "Total:", len(y_val_single))
+    print("Training Counts", np.unique(y_train_single, return_counts=True), "Total:", len(y_train_single))
 
 
     X_train, y_train, X_val, y_val, X_test, y_test, host_gal_train, host_gal_test, host_gal_val, ordered_class_names, class_weights, ntimesteps=load_ztf_data(True)
@@ -91,6 +91,8 @@ if __name__ == '__main__':
                 else:
                     new_model = build_model(latent_size=100, ntimesteps=bts.X_train.shape[1], num_classes=bts.y_train.shape[1], contextual=0, n_features=bts.X_train.shape[2])
                 
+                new_model.summary()
+                new_model.compile(optimizer='adam', loss='categorical_crossentropy', metrics=['accuracy'])
                 val = limit//10
                 train = limit - val
                 astromcad.train(new_model, bts.X_train[:train], bts.y_train[:train], bts.X_val[:val], bts.y_val[:val], bts.class_weights, epochs=40)
@@ -116,8 +118,10 @@ if __name__ == '__main__':
 
     limits = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1200, 1400, 1600, 1800, 2000, 2500, 3000, 3500, 4000, 5000, 6000]
 
-    unfrozen = ['dense_3', 'latent', 'output']
+    unfrozen = ['gru_1', 'gru_2', 'dense_3', 'latent', 'output']
     # experiment(pre=True, limits=limits, fname='bts_ft_last_two_five1', long_title='BTS Fine Tuned, Output and Latnet', unfrozen = ['output', 'latent'])
-    experiment(pre=True, limits=limits, fname='bts_ft_output_three_new', long_title='BTS Fine Tuned Output', unfrozen=['output'])
-    # experiment(pre=True, limits=limits, fname='bts_ft_all_five1', long_title='BTS Fine Tuned All', unfrozen=['gru1', 'gru2', 'dense_1', 'dense_3', 'latent', 'output'])
-    experiment(pre=False, limits=limits, fname='bts_direct_three_new', long_title='BTS Direct Training', unfrozen=None)
+    
+    # experiment(pre=True, limits=limits, fname='bts_ft_output_five', long_title='BTS Fine Tuned Output', unfrozen=['output'])
+    # experiment(pre=True, limits=limits, fname='bts_ft_full_five', long_title='BTS Fine Tuned Fully', unfrozen=unfrozen)
+    experiment(pre=True, limits=limits, fname='bts_ft_last_two', long_title='BTS Fine Tuned Last Two', unfrozen=['output', 'latent'])
+    # experiment(pre=False, limits=limits, fname='bts_direct_five', long_title='BTS Direct Training', unfrozen=None)

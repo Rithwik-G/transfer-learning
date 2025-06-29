@@ -12,7 +12,8 @@ plt.figure(figsize=(8, 6))
 storage_path = "/ocean/projects/phy240020p/rgupta9/transfer_learning"
 
 
-files = ['bts/bts_ft_output_three', 'bts/bts_direct_three']#, 'bts/bts_ft_all.pkl', 'bts/bts_ft_last_two.pkl']
+
+files = ['bts/bts_ft_last_two', 'bts/bts_direct_five']#, 'bts/bts_ft_full_five.pkl', 'bts/bts_ft_last_two.pkl']
 names = ['Transfer Learning', 'Direct Training']
 
 # files = ['bts/bts_ft_output_five1', 'bts/bts_ft_all', 'bts/bts_ft_last_two']
@@ -45,9 +46,14 @@ for ind, file in enumerate(files):
     res = result.performance
     
     limits = list(res.keys())
+
     perf = []
     err = []
     for limit in limits:
+        if (limit > 4000):
+            limits = limits[:-2]
+            break
+        
         perf.append(np.median(res[limit][metric]))
         err.append(np.median(np.abs(res[limit][metric] - np.median(res[limit][metric]))))
     perf = np.array(perf)
@@ -73,9 +79,9 @@ plt.legend(fontsize=15)
 # plt.title("BTS Performance", fontsize=20)
 plt.xlabel("Training Samples", fontsize=15)
 plt.ylabel("Classification AUROC", fontsize=15)
-os.makedirs("figures", exist_ok=True)
+os.makedirs("final_figures", exist_ok=True)
 plt.grid()
-# plt.savefig("figures/bts_macro_five.pdf", bbox_inches='tight')
+plt.savefig("final_figures/bts.pdf", bbox_inches='tight')
 plt.show()
 plt.clf()
 
@@ -88,8 +94,8 @@ by_class = dict(zip(['SLSN-I', 'SN II', 'SN Ia', 'SN Ib/c', 'TDE'], [  29,  762,
 comparison = files # ['bts/bts_ft_output_five1', 'bts/bts_direct_five1']
 # Compare each class from the two files in 'comparison'
 results = [load(os.path.join(storage_path, f + '.pkl')).performance for f in comparison]
-limits = list(results[0].keys())
-classes = list(results[0][limits[0]]['class_based'].keys())
+limits = list(results[1].keys())
+classes = list(results[1][limits[0]]['class_based'].keys())
 
 fig, axs = plt.subplots(len(classes), 1, figsize=(8, 4 * len(classes)), sharex=True)
 
@@ -134,8 +140,7 @@ for idx, cl in enumerate(classes):
 axs[-1].set_xlabel("Training Samples", fontsize=15)
 axs[-1].legend(fontsize=15)
 plt.tight_layout()
-os.makedirs("figures", exist_ok=True)
-plt.savefig("figures/bts_cls_three.pdf", bbox_inches='tight')
+plt.savefig("final_figures/bts_cls.pdf", bbox_inches='tight')
 plt.show()
 
 assert(False)
