@@ -16,13 +16,9 @@ storage_path = "/ocean/projects/phy240020p/rgupta9/transfer_learning"
 files = ['bts/bts_ft_last_two', 'bts/bts_direct_five']#, 'bts/bts_ft_full_five.pkl', 'bts/bts_ft_last_two.pkl']
 names = ['Transfer Learning', 'Direct Training']
 
-# files = ['bts/bts_ft_output_five1', 'bts/bts_ft_all', 'bts/bts_ft_last_two']
-# names = ['Output Only', 'Fully Unfrozen', 'Last Two Layers']
-
 colors = [
     "#fc8d62",  # coral
     "#66c2a5",  # teal
-    
     "#e41a1c",  # red
     "#377eb8",  # blue
     "#4daf4a",  # green
@@ -69,14 +65,13 @@ def months_to_samples(x):
     return x * obj_per_month
 
 
-
 ax = plt.gca()
 secax = ax.secondary_xaxis('top', functions=(samples_to_months, months_to_samples))
 secax.set_xlabel("Months of Data", fontsize=12)
 secax.xaxis.set_major_formatter(FuncFormatter(lambda x, _: f"{x:.1f}"))
-# ax.set_ylim(0.2, 0.95)
+
 plt.legend(fontsize=15)
-# plt.title("BTS Performance", fontsize=20)
+
 plt.xlabel("Training Samples", fontsize=15)
 plt.ylabel("Classification AUROC", fontsize=15)
 os.makedirs("final_figures", exist_ok=True)
@@ -91,7 +86,7 @@ by_class = dict(zip(['SLSN-I', 'SN II', 'SN Ia', 'SN Ib/c', 'TDE'], [  29,  762,
 
 
 # Add a top axis that scales to the by_class counts
-comparison = files # ['bts/bts_ft_output_five1', 'bts/bts_direct_five1']
+comparison = files
 # Compare each class from the two files in 'comparison'
 results = [load(os.path.join(storage_path, f + '.pkl')).performance for f in comparison]
 limits = list(results[1].keys())
@@ -172,30 +167,3 @@ os.makedirs("figures", exist_ok=True)
 plt.savefig("figures/lsst_by_class_ft.pdf", bbox_inches='tight')
 plt.show()
 
-# m = 'macro'
-# fname = "lsst_ft_perf.pkl"
-
-
-# res = load(os.path.join(storage_path, fname))
-
-
-# limits = list(res.keys())
-# perf = []
-# err = []
-# for limit in limits:
-#     perf.append(np.mean(res[limit][m]))
-#     err.append(np.std(res[limit][m]))
-
-# plt.figure(figsize=(8, 6))
-# plt.errorbar(limits, perf, yerr=err, fmt='o', capsize=5, capthick=2, elinewidth=2, label='Transfer Learning')
-
-# fname = "bts_direct_perf_5.pkl"
-# res = load(os.path.join(storage_path, fname))
-# limits = list(res.keys())
-# perf = []
-# err = []
-# for limit in limits:
-#     perf.append(np.mean(res[limit][m]))
-#     err.append(np.std(res[limit][m]))
-
-# plt.errorbar(limits, perf, yerr=err, fmt='o', capsize=5, capthick=2, elinewidth=2, label='Direct Training')
